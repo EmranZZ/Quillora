@@ -2,18 +2,20 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt.android)
     kotlin("kapt")
+    id("kotlin-kapt")
 }
 
 android {
-    namespace = "com.example.quillora"
+    namespace = "com.example.jetpackcompose"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.quillora"
+        applicationId = "com.example.jetpackcompose"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -41,6 +43,10 @@ android {
     buildFeatures {
         compose = true
     }
+
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
@@ -63,33 +69,27 @@ dependencies {
     implementation(libs.androidx.navigation.compose) //navigation
     implementation(libs.androidx.compose.material.icons.extended) //for more icons
     implementation(libs.androidx.lifecycle.viewmodel.compose) //viewModel
+    implementation(libs.androidx.constraintlayout.compose) //constraint layout
+    implementation(libs.accompanist.permissions) //permission
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.compose.runtime) //runtime compose
+
+    implementation(libs.retrofit) //retrofit
+    implementation(libs.converter.gson)
 
     implementation(libs.hilt.android) // Hilt
     kapt(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose) // // Hilt + Navigation (Compose)
+    implementation(libs.coil)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.toolbar.compose)
+    implementation(libs.androidx.compose.runtime.livedata) //liveData runtime library
+    implementation(libs.androidx.paging.compose) // pagination dependency
 
-    // Compose dependencies
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0-beta01")
-    implementation ("androidx.navigation:navigation-compose:2.4.0-alpha09")
-    implementation ("androidx.compose.material:material-icons-extended:$compose_version")
-    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0-alpha03")
 
-    // Coroutines
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
-
-    //Dagger - Hilt
-    implementation ("com.google.dagger:hilt-android:2.38.1")
-    kapt ("com.google.dagger:hilt-android-compiler:2.37")
-    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
-    kapt ("androidx.hilt:hilt-compiler:1.0.0")
-
-    // Room
-    implementation ("androidx.room:room-runtime:2.3.0")
-    kapt ("androidx.room:room-compiler:2.3.0")
-
-    // Kotlin Extensions and Coroutines support for Room
-    implementation ("androidx.room:room-ktx:2.3.0")
+    // Room Database
+    implementation(libs.androidx.room.runtime) // core room library
+    implementation(libs.androidx.room.ktx)     // kotlin helper (coroutine support)
+    kapt(libs.androidx.room.compiler)
 
 }
