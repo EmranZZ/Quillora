@@ -10,6 +10,7 @@ import com.example.quillora.feature_note.domain.util.NoteOrder
 import com.example.quillora.feature_note.domain.util.OrderType
 import com.example.quillora.feature_note.presentation.notes.NoteEvent
 import com.example.quillora.feature_note.presentation.notes.NotesState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -19,6 +20,7 @@ import javax.inject.Inject
 /**
  * @author EMRAN AHMED
  */
+@HiltViewModel
 class NotesViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases
 ) : ViewModel() {
