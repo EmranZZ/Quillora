@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import com.example.quillora.feature_note.presentation.notes.components.NoteItem
 import com.example.quillora.feature_note.presentation.notes.components.OrderSection
 import com.example.quillora.feature_note.presentation.notes.viewmodel.NotesViewModel
+import com.example.quillora.feature_note.presentation.util.Screen
 import kotlinx.coroutines.launch
 
 /**
@@ -49,7 +50,7 @@ import kotlinx.coroutines.launch
  */
 
 @Composable
-fun NoteScreen(
+fun NotesScreen(
     navController: NavController,
     viewModel: NotesViewModel = hiltViewModel()
 ){
@@ -60,7 +61,9 @@ fun NoteScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = {
+                    navController.navigate(Screen.AddEditNoteScreen.route)
+                },
                 containerColor = FloatingActionButtonDefaults.containerColor
             ) {
                 Icon(
@@ -100,51 +103,55 @@ fun NoteScreen(
                     )
                 }
             }
-        }
 
-        AnimatedVisibility(
-            visible = state.isOrderSectionVisible,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
-        ) {
+            AnimatedVisibility(
+                visible = state.isOrderSectionVisible,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
 
-            OrderSection(
-                modifier = Modifier,
-                noteOrder = state.noteOrder,
-                onChangeOrder = {
-                    viewModel.onEvent(NoteEvent.Order(it))
-                }
-            )
-        }
-        Spacer(Modifier.height(16.dp))
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(state.notes){ note->
-                NoteItem(
-                    note = note,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable{
-
-                        }
-                    ,
-                    onDeleteClick = {
-                        viewModel.onEvent(NoteEvent.DeleteNote(note))
-
-                        scope.launch {
-                            val result = snackbarHostState.showSnackbar(
-                                message = "Note deleted",
-                                actionLabel = "Undo"
-                            )
-                            if(result == SnackbarResult.ActionPerformed){
-                                viewModel.onEvent(NoteEvent.RestoreNote)
-                            }
-                        }
+                OrderSection(
+                    modifier = Modifier,
+                    noteOrder = state.noteOrder,
+                    onChangeOrder = {
+                        viewModel.onEvent(NoteEvent.Order(it))
                     }
                 )
-                Spacer(Modifier.height(16.dp))
+            }
+            Spacer(Modifier.height(16.dp))
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(state.notes){ note->
+                    NoteItem(
+                        note = note,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable{
+
+                                navController.navigate(
+                                    Screen.AddEditNoteScreen.route +
+                                    "?noteId=${note.id}&noteColor=${note.color}"
+                                )
+                            }
+                        ,
+                        onDeleteClick = {
+                            viewModel.onEvent(NoteEvent.DeleteNote(note))
+
+                            scope.launch {
+                                val result = snackbarHostState.showSnackbar(
+                                    message = "Note deleted",
+                                    actionLabel = "Undo"
+                                )
+                                if(result == SnackbarResult.ActionPerformed){
+                                    viewModel.onEvent(NoteEvent.RestoreNote)
+                                }
+                            }
+                        }
+                    )
+                    Spacer(Modifier.height(16.dp))
+                }
             }
         }
     }
@@ -153,5 +160,5 @@ fun NoteScreen(
 @Preview(showBackground = true)
 @Composable
 fun NoteScreenPreview(){
-    NoteScreen(navController = NavController(LocalContext.current))
+    NotesScreen(navController = NavController(LocalContext.current))
 }
